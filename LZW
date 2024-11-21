@@ -1,0 +1,85 @@
+#include <iostream>
+#include <string>
+#include <cstring>
+#include <iomanip>
+using namespace std;
+
+int srch(string dic[], int size, string keyy)
+{ // define a function to search for the element in  the dictionary
+  for (int x = 0; x < size; x++)
+  { // search from dic. start to the last element added
+    if (dic[x] == keyy)
+    {
+      return x; //   returns element indx if the element is in dic
+    }
+  }
+  return -1; //  returns  -1 if not found
+}
+
+int main()
+{
+  string str;
+  cout << "Enter the message:\n";
+  cout << endl;
+  getline(cin, str);
+  cout << endl;
+  int strl = str.length();  // store msg length in a varaible
+  char msg[strl];           // define arry of chars
+  strcpy(msg, str.c_str()); // convert msg to arry of chars
+
+  string dic[1024]; // define dictionary arry and store ASCII code from 0 to 256
+  for (int i = 0; i <= 255; i++)
+  {
+    dic[i] = char(i);
+  }
+  int codee[1024]; //  define integer arry to hold msg compressed codes
+
+  int indx = 256; // to hold element adress in dic.
+  int cdindx = 0; // to hold code adress in code array
+  char c;
+  string p;
+  string keyy;
+
+  for (int j = 0; j < strl; j++)
+  { // the LZW algorithm
+    c = msg[j];
+    keyy = p + c;
+
+    if (srch(dic, indx, keyy) == -1)
+    {                                     // if not found, apply the algorithm
+      dic[indx] = keyy;                   // storing new element in dic.
+      indx++;                             // to hold the next adress
+      codee[cdindx] = srch(dic, indx, p); // storing code in its adress
+      cdindx++;
+      p = c; // to hold the next adress
+    }
+    else
+    {
+      p = keyy; // if found add c to p and store in p and repeat algorithm
+    }
+  }
+
+  codee[cdindx] = srch(dic, indx, p); // to store last code
+
+  cout << "The message compression code is:\n";
+  cout << endl;
+  for (int z = 0; z <= cdindx; z++)
+  {
+
+    cout << codee[z] << ","; // print the code
+  }
+  cout << endl;
+  cout << endl;
+  cout << endl; 
+  double CR= strl ; 
+  cout<<"Comprission Ratio is: " <<setprecision(2)<<fixed<< ((cdindx+1)/CR)*100 << "%"; 
+  cout << endl;
+  cout << endl;
+  cout << endl;
+  cout << "SN\t" << "Index in dectionary\t" << "Adedd Element" << endl;
+  for (int g = 256; g <= indx; g++)
+  {
+    cout << g - 255 << "\t" << "\t" << g << "\t" << "\t" << "\t" << dic[g] << endl;
+  } // print table of added elements
+  return 0;
+}
